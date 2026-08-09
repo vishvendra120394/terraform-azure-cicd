@@ -22,17 +22,51 @@ jobs:
 
     steps:
 
+      # 1. Checkout source code
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
+      # 2. Secret scanning
+      - name: Gitleaks Secret Scan
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. Install Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      # 4. Terraform formatting
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
+      # 5. TFLint setup
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v5
+
+      # 6. Initialize TFLint
+      - name: Initialize TFLint
+        run: tflint --init
+
+      # 7. Terraform code quality
+      - name: Run TFLint
+        run: tflint
+
+      # 8. Terraform security / IaC scan
+      - name: Terraform Security Scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: config
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          exit-code: 1
+
+      # 9. Terraform initialization
       - name: Terraform Init
         run: terraform init -backend=false
 
+      # 10. Terraform validation
       - name: Terraform Validate
         run: terraform validate
