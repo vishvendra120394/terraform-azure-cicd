@@ -9,6 +9,7 @@ on:
       - main
 
 permissions:
+  id-token: write
   contents: read
 
 jobs:
@@ -28,33 +29,45 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 2. Secret scanning
+      # 2. Azure Login using OIDC
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # 3. Verify Azure authentication
+      - name: Verify Azure Login
+        run: az account show
+
+      # 4. Secret scanning
       - name: Gitleaks Secret Scan
         uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 3. Install Terraform
+      # 5. Install Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # 4. Terraform formatting
+      # 6. Terraform formatting
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
-      # 5. TFLint setup
+      # 7. TFLint setup
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v5
 
-      # 6. Initialize TFLint
+      # 8. Initialize TFLint
       - name: Initialize TFLint
         run: tflint --init
 
-      # 7. Terraform code quality
+      # 9. Terraform code quality
       - name: Run TFLint
         run: tflint
 
-      # 8. Terraform security / IaC scan
+      # 10. Terraform security / IaC scan
       - name: Terraform Security Scan
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -63,10 +76,10 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: 1
 
-      # 9. Terraform initialization
+      # 11. Terraform initialization
       - name: Terraform Init
         run: terraform init -backend=false
 
-      # 10. Terraform validation
+      # 12. Terraform validation
       - name: Terraform Validate
         run: terraform validate
