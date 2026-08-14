@@ -16,6 +16,7 @@ jobs:
   terraform:
     name: Terraform Validation
     runs-on: ubuntu-latest
+    environment: pre-prod
 
     defaults:
       run:
@@ -76,10 +77,24 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: 1
 
+
+
       # 11. Terraform initialization
       - name: Terraform Init
         run: terraform init -backend=false
 
-      # 12. Terraform validation
+      # 12. Create Terraform variables file
+      - name: Create Terraform variables file
+        shell: bash
+        env:
+          TERRAFORM_TFVARS: ${{ secrets.TERRAFORM_TFVARS }}
+        run: |
+          printf '%s\n' "$TERRAFORM_TFVARS" > terraform.tfvars
+
+      # 13. Terraform validation
       - name: Terraform Validate
         run: terraform validate
+
+      # 14. Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan -input=false -no-color
