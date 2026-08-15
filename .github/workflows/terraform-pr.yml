@@ -81,7 +81,7 @@ jobs:
 
       # 11. Terraform initialization
       - name: Terraform Init
-        run: terraform init -backend=false
+        run: terraform init
 
       # 12. Create Terraform variables file
       - name: Create Terraform variables file
