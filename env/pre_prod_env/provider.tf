@@ -12,7 +12,7 @@ terraform {
     container_name       = "tfstate"
     storage_account_name = "tfstatevish2026"
     key                  = "pre-prod.terraform.tfstate"
-    use_azuread_auth     = true
+    use_azuread_auth     = false
   }
 }
 provider "azurerm" {
