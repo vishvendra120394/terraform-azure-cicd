@@ -22,3 +22,6 @@ variable "vm" {
 variable "vault" {
   type = map(any)
 }
+variable "ssh_public_key" {
+  type = string
+}
