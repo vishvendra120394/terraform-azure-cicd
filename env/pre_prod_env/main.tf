@@ -22,8 +22,9 @@ module "azurerm_subnet" {
 }
 
 module "azurerm_public_ip" {
-  source = "../../Child_module/azurerm_public_ip"
-  pip    = var.pip
+  source     = "../../Child_module/azurerm_public_ip"
+  pip        = var.pip
+  depends_on = [module.azurerm_resource_group]
 }
 
 module "azurerm_network_interface" {
