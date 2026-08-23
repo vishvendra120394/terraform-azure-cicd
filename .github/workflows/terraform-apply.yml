@@ -68,14 +68,19 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -input=false -out=tfplan
 
-      # 9. Upload Terraform Plan
+      # 9. Generate readable Terraform Plan
+      - name: Generate readable Terraform Plan
+        run: terraform show -no-color tfplan > tfplan.txt
+
+      # 10. Upload Terraform Plan
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v4
         with:
           name: terraform-plan
-          path: env/pre_prod_env/tfplan
+          path: |
+            env/pre_prod_env/tfplan
+            env/pre_prod_env/tfplan.txt
           retention-days: 1
-
 
   # ==========================================
   # JOB 2: Terraform Apply
