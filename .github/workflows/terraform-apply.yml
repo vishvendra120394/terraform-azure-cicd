@@ -63,8 +63,7 @@ jobs:
       # 7. Terraform Validate
       - name: Terraform Validate
         run: terraform validate
-
-      # 8. Terraform Plan
+     # 8. Terraform Plan
       - name: Terraform Plan
         run: terraform plan -input=false -out=tfplan
 
@@ -72,7 +71,15 @@ jobs:
       - name: Generate readable Terraform Plan
         run: terraform show -no-color tfplan > tfplan.txt
 
-      # 10. Upload Terraform Plan
+      # 10. Add Terraform Plan to Summary
+      - name: Add Terraform Plan to Summary
+        run: |
+          echo "## Terraform Plan" >> "$GITHUB_STEP_SUMMARY"
+          echo '```terraform' >> "$GITHUB_STEP_SUMMARY"
+          cat tfplan.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      # 11. Upload Terraform Plan
       - name: Upload Terraform Plan
         uses: actions/upload-artifact@v4
         with:
@@ -81,7 +88,6 @@ jobs:
             env/pre_prod_env/tfplan
             env/pre_prod_env/tfplan.txt
           retention-days: 1
-
   # ==========================================
   # JOB 2: Terraform Apply
   # ==========================================
