@@ -97,4 +97,9 @@ jobs:
 
       # 14. Terraform Plan
       - name: Terraform Plan
-        run: terraform plan -input=false -no-color
+        run: terraform plan -input=false -no-color -out=tfplan
+
+      # 15. Verify Terraform Plan
+      - name: Verify Terraform Plan
+        run: ls -lh tfplan
+
