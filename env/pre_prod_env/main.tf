@@ -37,7 +37,7 @@ module "azurerm_virtual_machine" {
   vm             = var.vm
   nic            = var.nic
   ssh_public_key = var.ssh_public_key
-  depends_on     = [module.azurerm_resource_group, module.azurerm_public_ip, module.azure_network]
+  depends_on     = [module.azurerm_resource_group, module.azurerm_public_ip, module.azure_network, module.azurerm_network_interface]
 }
 
 module "azurerm_key_vault" {
