@@ -25,3 +25,7 @@ variable "vault" {
 variable "ssh_public_key" {
   type = string
 }
+
+variable  "test"{
+type=string
+}
